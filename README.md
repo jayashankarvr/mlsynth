@@ -1,6 +1,6 @@
 # mlsynth
 
-A permissive, rule-based Malayalam morphological synthesizer. It does forward
+A rule-based Malayalam morphological synthesizer. It does forward
 morphological generation: given a root and grammatical features, it produces the
 inflected surface form (the counterpart to morphological analysis/segmentation).
 
@@ -54,7 +54,7 @@ for the precise gaps. Clitics/postpositions, stylistic variants, and verbs are f
 ## Install
 
 ```bash
-pip install mlsynth        # once published
+pip install mlsynth
 # from source:
 pip install -e ".[dev]"
 ```
@@ -64,6 +64,4 @@ pip install -e ".[dev]"
 Apache-2.0. See `LICENSE` and `NOTICE`. Contributions are accepted under Apache-2.0
 §5 (inbound = outbound); no separate CLA is required.
 
-The implemented linguistic rules are **facts** restated in our own code; no source's
-text, tables, code, or data is reproduced. Sources are credited in `REFERENCES.md` as
-scholarship; that implies no endorsement and creates no license obligation.
+Linguistic sources are credited in `REFERENCES.md`.
