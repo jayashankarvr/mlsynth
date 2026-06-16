@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright 2026 Jayashankar R
-"""A permissive, rule-based Malayalam morphological synthesizer.
+"""A rule-based Malayalam morphological synthesizer.
 
 Forward morphological generation (root + features -> inflected surface form),
 starting with noun inflection. Rules are declarative and provenance-tagged; see
@@ -12,7 +12,7 @@ from .nouns import UnsupportedRoot, list_supported_classes, synthesize_noun
 from .pronouns import is_pronoun, list_pronouns
 from .types import Animacy, Case, Gender, NounFeatures, Number, Register, SynthResult
 
-__version__ = "0.0.3"
+__version__ = "0.0.4"
 __all__ = [
     "Animacy",
     "Case",

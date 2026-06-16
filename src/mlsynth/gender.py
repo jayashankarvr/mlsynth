@@ -31,7 +31,8 @@ def derive_feminine(masculine: str) -> str:
         if stem and "ക" <= stem[-1] <= "ഺ":
             return stem + "ി"
     elif masculine.endswith("ി"):
-        return masculine + "നി"          # -ഇ -> -ഇനി
+        if len(masculine) > 1 and "ക" <= masculine[-2] <= "ഺ":  # -ഇ on a real consonant
+            return masculine + "നി"      # -ഇ -> -ഇനി
     raise UnsupportedDerivation(
         f"cannot derive a feminine form from {masculine!r}; expected a masculine base "
         f"ending in -ൻ (-> -ഇ) or -ഇ (-> -ഇനി)"

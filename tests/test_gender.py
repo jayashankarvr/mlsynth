@@ -29,8 +29,8 @@ def test_derive_then_inflect():
     assert synthesize_noun(fem, Case.GENITIVE).surface == "എഴുത്തുകാരിയുടെ"
 
 
-@pytest.mark.parametrize("bad", ["മരം", "പശു", "വീട്", "അമ്മ", "ൻ"])
+@pytest.mark.parametrize("bad", ["മരം", "പശു", "വീട്", "അമ്മ", "ൻ", "ി"])
 def test_underivable_base_raises(bad):
-    # The last case (a bare chillu) must raise, not emit a lone matra ("ി").
+    # A bare chillu ("ൻ") or a bare matra ("ി") must raise, not emit a lone-matra non-word.
     with pytest.raises(UnsupportedDerivation):
         derive_feminine(bad)

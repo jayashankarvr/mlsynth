@@ -4,8 +4,8 @@ build-backend = "hatchling.build"
 
 [project]
 name = "mlsynth"
-version = "0.0.3"
-description = "Permissive, rule-based Malayalam morphological synthesizer (noun inflection generation)."
+version = "0.0.4"
+description = "Rule-based Malayalam morphological synthesizer (noun inflection generation)."
 readme = "README.md"
 requires-python = ">=3.9"
 license = "Apache-2.0"
