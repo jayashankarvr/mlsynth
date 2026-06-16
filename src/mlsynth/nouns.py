@@ -17,6 +17,7 @@ from __future__ import annotations
 
 from typing import List, Optional
 
+from .pronouns import PRONOUN_FORMS
 from .rules import CLASSES, NounClass
 from .types import Animacy, Case, Gender, NounFeatures, Number, Register, SynthResult
 
@@ -34,6 +35,11 @@ def _is_vowel_sign(ch: str) -> bool:
 def _is_independent_vowel(ch: str) -> bool:
     o = ord(ch)
     return 0x0D05 <= o <= 0x0D14 or o in (0x0D60, 0x0D61)
+
+
+def _is_base_consonant(ch: str) -> bool:
+    # A consonant letter carrying its inherent vowel (no virama/matra) = an -അ stem.
+    return 0x0D15 <= ord(ch) <= 0x0D3A
 
 
 def _attach(stem: str, suffix: str) -> str:
@@ -59,6 +65,8 @@ def _has_base_letter(s: str) -> bool:
 
 
 def _class_matches(cls: NounClass, root: str) -> bool:
+    if cls.ends_consonant and root and _is_base_consonant(root[-1]):
+        return True  # -അ stem (ends in a bare consonant, e.g. അമ്മ, പുഴ)
     for e in cls.endings:
         if root.endswith(e):
             if cls.pre:
@@ -91,7 +99,9 @@ def _resolve_class(root: str, stem_class: Optional[str]) -> NounClass:
             )
         return cls
     for cls in sorted(
-        CLASSES.values(), key=lambda c: max(len(e) for e in c.endings), reverse=True
+        CLASSES.values(),
+        key=lambda c: max((len(e) for e in c.endings), default=0),
+        reverse=True,
     ):
         if _class_matches(cls, root):
             return cls
@@ -125,6 +135,33 @@ def synthesize_noun(
         raise UnsupportedRoot("root must be a non-empty string")
     if not _has_base_letter(root):
         raise UnsupportedRoot(f"root {root!r} contains no Malayalam base letter")
+
+    # Suppletive pronouns bypass the rule engine: their oblique stems are irregular
+    # (ഞാൻ -> എന്ന-), so the class engine would emit a wrong form. Look them up first,
+    # and raise for any case not yet ratified rather than fall through to the wrong rule.
+    if stem_class is None and root in PRONOUN_FORMS:
+        forms = PRONOUN_FORMS[root]
+        features = NounFeatures(
+            case=case, number=number, animacy=animacy, register=register, gender=gender
+        )
+        # The table is singular-only; pronoun plurals are suppletive (ഞാൻ -> ഞങ്ങൾ), so
+        # never return the singular form for a plural request.
+        if number is not Number.SINGULAR:
+            raise NotImplementedError(
+                f"plural not encoded for pronoun {root!r} (suppletive; singular only)"
+            )
+        try:
+            surface = forms[case]
+        except KeyError:
+            raise NotImplementedError(
+                f"case {case.value!r} not encoded for pronoun {root!r} (suppletive; "
+                f"available: {sorted(c.value for c in forms)})"
+            ) from None
+        return SynthResult(
+            surface=surface, root=root, features=features, morphemes=[surface],
+            stem_class="pronoun", provenance="native-2026", verified=True,
+        )
+
     cls = _resolve_class(root, stem_class)
     features = NounFeatures(
         case=case, number=number, animacy=animacy, register=register, gender=gender

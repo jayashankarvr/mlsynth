@@ -156,10 +156,10 @@ def test_native_ratified_forms_are_verified():
     assert synthesize_noun("വീട്", Case.LOCATIVE).verified is True
 
 
-def test_extrapolated_forms_are_unverified():
-    # u_vowel plural: only the -ക്കൾ marker is native-given; the oblique paradigm is extrapolated.
-    r = synthesize_noun("പശു", Case.GENITIVE, number=Number.PLURAL)
-    assert r.surface == "പശുക്കളുടെ" and r.verified is False
+def test_long_ii_stem():
+    # long -ീ folds into i_vowel (യ glide)
+    assert synthesize_noun("സ്ത്രീ", Case.GENITIVE).surface == "സ്ത്രീയുടെ"
+    assert synthesize_noun("സ്ത്രീ", Case.VOCATIVE).surface == "സ്ത്രീയേ"
 
 
 def test_morphemes_join_to_surface():
@@ -169,8 +169,9 @@ def test_morphemes_join_to_surface():
 
 # --- soundness: raise, never silently wrong ---
 
-@pytest.mark.parametrize("root", ["അമ്മ", "പുഴ", "അവൻ", "നായർ", "സ്ത്രീ", "ABC", "123", "ി", ""])
+@pytest.mark.parametrize("root", ["ABC", "123", "ി", ""])
 def test_unsupported_roots_raise(root):
+    # No Malayalam base letter, a bare matra, or empty -> UnsupportedRoot.
     with pytest.raises(UnsupportedRoot):
         synthesize_noun(root, Case.GENITIVE)
 
@@ -180,16 +181,74 @@ def test_explicit_mismatched_class_raises():
         synthesize_noun(AM, Case.ACCUSATIVE, stem_class="i_vowel")
 
 
-def test_unencoded_case_raises():
+def test_a_stem_plural_raises():
     with pytest.raises(NotImplementedError):
-        synthesize_noun("കലാം", Case.INSTRUMENTAL)    # vowel_anuswara has no instrumental yet
+        synthesize_noun("അമ്മ", Case.GENITIVE, number=Number.PLURAL)  # a_stem plural not encoded yet
 
 
 def test_unencoded_plural_raises():
     with pytest.raises(NotImplementedError):
-        synthesize_noun("കലാം", Case.GENITIVE, number=Number.PLURAL)  # no plural encoded
+        synthesize_noun("അവൻ", Case.GENITIVE, number=Number.PLURAL)  # chillu has no plural
+
+
+@pytest.mark.parametrize("root,case,expected", [
+    # a_stem (bare-consonant -അ stems)
+    ("അമ്മ", Case.ACCUSATIVE, "അമ്മയെ"),
+    ("അമ്മ", Case.GENITIVE, "അമ്മയുടെ"),
+    ("അമ്മ", Case.DATIVE, "അമ്മയ്ക്ക്"),
+    ("അമ്മ", Case.VOCATIVE, "അമ്മേ"),
+    ("മഴ", Case.ACCUSATIVE, "മഴയെ"),
+    # chillu classes
+    ("അവൻ", Case.ACCUSATIVE, "അവനെ"),
+    ("അവൻ", Case.DATIVE, "അവന്"),
+    ("നടൻ", Case.GENITIVE, "നടന്റെ"),
+    ("മകൻ", Case.VOCATIVE, "മകനേ"),
+    ("മകൾ", Case.ACCUSATIVE, "മകളെ"),
+    ("മകൾ", Case.DATIVE, "മകൾക്ക്"),
+    ("കാർ", Case.DATIVE, "കാറിന്"),
+    ("കാർ", Case.GENITIVE, "കാറിന്റെ"),
+    ("കാൽ", Case.ACCUSATIVE, "കാലിനെ"),
+    ("തൂൺ", Case.ACCUSATIVE, "തൂണിനെ"),
+    # new instrumentals
+    ("കലാം", Case.INSTRUMENTAL, "കലാമിനാൽ"),
+    ("വീട്", Case.INSTRUMENTAL, "വീടിനാൽ"),
+    # chillu oblique/spatial cases
+    ("അവൻ", Case.SOCIATIVE, "അവനോട്"),
+    ("അവൻ", Case.LOCATIVE, "അവനിൽ"),
+    ("മകൾ", Case.SOCIATIVE, "മകളോട്"),
+    ("കാർ", Case.SOCIATIVE, "കാറിനോട്"),
+    ("കാൽ", Case.LOCATIVE, "കാലിൽ"),
+    # chillu genitive/vocative/accusative gaps now filled
+    ("മകൾ", Case.GENITIVE, "മകളുടെ"),
+    ("മകൾ", Case.VOCATIVE, "മകളേ"),
+    ("കാൽ", Case.GENITIVE, "കാലിന്റെ"),
+    ("തൂൺ", Case.VOCATIVE, "തൂണേ"),
+    ("കാർ", Case.ACCUSATIVE, "കാറിനെ"),
+    ("കാർ", Case.VOCATIVE, "കാറേ"),
+    # long -ീ via i_vowel
+    ("സ്ത്രീ", Case.ACCUSATIVE, "സ്ത്രീയെ"),
+])
+def test_new_class_forms(root, case, expected):
+    assert synthesize_noun(root, case).surface == expected
+
+
+@pytest.mark.parametrize("root,case,expected", [
+    ("കലാം", Case.NOMINATIVE, "കലാമുകൾ"),
+    ("കലാം", Case.ACCUSATIVE, "കലാമുകളെ"),
+    ("വീട്", Case.NOMINATIVE, "വീടുകൾ"),
+    ("വീട്", Case.GENITIVE, "വീടുകളുടെ"),
+    ("പശു", Case.NOMINATIVE, "പശുക്കൾ"),
+    ("പശു", Case.GENITIVE, "പശുക്കളുടെ"),
+])
+def test_new_plurals(root, case, expected):
+    assert synthesize_noun(root, case, number=Number.PLURAL).surface == expected
+
+
+def test_u_vowel_plural_now_verified():
+    assert synthesize_noun("പശു", Case.GENITIVE, number=Number.PLURAL).verified is True
 
 
 def test_supported_classes_listed():
-    cls = list_supported_classes()
-    assert {"am_neuter", "i_vowel", "vowel_anuswara", "u_vowel", "ṭ_geminate"} <= set(cls)
+    cls = set(list_supported_classes())
+    assert {"am_neuter", "i_vowel", "vowel_anuswara", "u_vowel", "ṭ_geminate",
+            "a_stem", "chillu_n", "chillu_ll", "chillu_r", "chillu_l", "chillu_nn"} <= cls

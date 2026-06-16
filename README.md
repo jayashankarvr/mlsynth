@@ -37,13 +37,17 @@ and no copyleft dependencies.
 
 ## Status
 
-Alpha. Five ending-conditioned noun classes: `am_neuter` (മരം) and `i_vowel` (കുട്ടി)
-are complete across 11 cases (singular and plural); `vowel_anuswara` (കലാം), `u_vowel`
-(പശു), and `ṭ_geminate` (വീട്) are partial. Includes differential object marking and a
-synthetic/colloquial register for the instrumental. Most forms are native-ratified
-(`verified=True`); a few are SMC-sourced pending sign-off (`verified=False`). See
-[`LIMITATIONS.md`](LIMITATIONS.md) for exactly what is unsupported. Remaining noun
-classes (a/e-stems, chillu), verbs, and pronouns are future work.
+Alpha. Eleven ending-conditioned noun classes across 11 cases, covering the major
+Malayalam noun shapes, with every encoded form native-ratified (`verified=True`); shapes
+outside the supported classes raise rather than guess. Five classes (`am_neuter` മരം,
+`vowel_anuswara` കലാം, `i_vowel`
+കുട്ടി/സ്ത്രീ, `u_vowel` പശു, `ṭ_geminate` വീട്) are complete in singular and plural;
+`a_stem` (അമ്മ) and the chillu classes (`അവൻ`, `മകൾ`, `കാർ`, `കാൽ`, `തൂൺ`) are
+singular-complete, with plurals pending. Suppletive personal pronouns (ഞാൻ, നീ, അവർ, നാം,
+താൻ, ഇവൻ) are handled through an exception table rather than the rule engine. Includes
+differential object marking and a synthetic/colloquial register for the instrumental. See
+[`LIMITATIONS.md`](LIMITATIONS.md) for the precise gaps. Plurals for `a_stem`/chillu,
+gender derivation, clitics/postpositions, stylistic variants, and verbs are future work.
 
 ## Install
 
