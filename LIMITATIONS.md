@@ -2,25 +2,21 @@
 
 mlsynth never emits a form it has not verified; when it cannot, it raises
 `NotImplementedError` (a supported class, but that case or number is not encoded) or
-`UnsupportedRoot` (the root fits no class). The items below are genuine constraints.
-Planned-but-unbuilt features (gender derivation, clitics, postpositions, stylistic
-variants) are tracked as future work in the README, not here.
-
-## Plurals: partial coverage
-
-- The classes `am_neuter`, `vowel_anuswara`, `i_vowel`, `u_vowel`, and `ṭ_geminate` have
-  plurals. `a_stem` and the chillu classes do not yet: their plurals are
-  animacy-conditioned (`-മാർ` human versus `-കൾ` inanimate, with irregulars like `മക്കൾ`),
-  which is not predictable from the stem shape and is not yet modelled. Requesting one
-  raises `NotImplementedError`.
+`UnsupportedRoot` (the root fits no class). The items below are genuine constraints:
+distinctions the orthography does not carry, and problems outside this package's scope.
+Planned-but-unbuilt features (clitics, postpositions, stylistic variants) are tracked as
+future work in the README, not here.
 
 ## Distinctions the input does not carry
 
+- **Animacy is not recoverable from spelling.** `a_stem` and chillu plurals therefore
+  require an explicit `animacy` and raise without it, since `-മാർ` (human) versus `-കൾ`
+  (inanimate) is not predictable from the stem. For the same reason the accusative
+  defaults to the overt form; the zero-marked inanimate accusative needs
+  `animacy=INANIMATE`.
 - **`u_vowel` and `a_stem` match broadly.** A malformed lemma (a samvruthokaram half-u
   written as a bare `-ു` instead of `-്`, or truncated text) is inflected rather than
   rejected, so callers must pass well-formed lemmas.
-- Without an `animacy` argument the accusative defaults to the overt form; the zero-marked
-  inanimate accusative needs `animacy=INANIMATE`.
 
 ## Out of scope
 

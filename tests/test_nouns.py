@@ -181,14 +181,13 @@ def test_explicit_mismatched_class_raises():
         synthesize_noun(AM, Case.ACCUSATIVE, stem_class="i_vowel")
 
 
-def test_a_stem_plural_raises():
+def test_a_stem_chillu_plural_needs_animacy():
+    # a_stem/chillu plurals are animacy-conditioned; without animacy they raise rather
+    # than guess (-മാർ vs -കൾ). Full coverage lives in test_plurals.py.
     with pytest.raises(NotImplementedError):
-        synthesize_noun("അമ്മ", Case.GENITIVE, number=Number.PLURAL)  # a_stem plural not encoded yet
-
-
-def test_unencoded_plural_raises():
+        synthesize_noun("അമ്മ", Case.GENITIVE, number=Number.PLURAL)
     with pytest.raises(NotImplementedError):
-        synthesize_noun("അവൻ", Case.GENITIVE, number=Number.PLURAL)  # chillu has no plural
+        synthesize_noun("കാർ", Case.GENITIVE, number=Number.PLURAL)
 
 
 @pytest.mark.parametrize("root,case,expected", [

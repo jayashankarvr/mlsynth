@@ -52,6 +52,9 @@ class NounClass:
     plural_cases: Dict[Case, CaseRule]
     pre: str = ""               # "" | "consonant" | "vowel" (what precedes the ending)
     ends_consonant: bool = False  # match roots ending in a bare consonant (-അ stems)
+    # When True the plural is animacy-conditioned (-മാർ human vs -കൾ inanimate), so it is
+    # computed in nouns.py rather than read from plural_marker/plural_cases (a_stem + chillu).
+    plural_requires_animacy: bool = False
 
 
 _GEMINATE_T = StemTransform("ട്", "ട്ട")  # ട് -> ട്ട for the ṭ_geminate spatial cases
@@ -212,11 +215,13 @@ CLASSES: Dict[str, NounClass] = {
         },
         plural_marker=StemTransform("", ""),
         plural_cases={},
+        plural_requires_animacy=True,
     ),
     # Chillu-final classes. The chillu reverts to its base consonant for vowel suffixes;
     # each chillu takes a different suffix set (native worksheet).
     # ൻ/ൾ take -ഓട് sociative and -ആൽ instrumental (on the reverted stem);
-    # ർ/ൽ/ൺ take the -ഇന- linker (sociative -ഇനോട്, instrumental -ഇനാൽ). Plurals deferred.
+    # ർ/ൽ/ൺ take the -ഇന- linker (sociative -ഇനോട്, instrumental -ഇനാൽ). Plurals are
+    # animacy-conditioned and computed in nouns.py (plural_requires_animacy).
     "chillu_n": NounClass(
         name="chillu_n",
         description="-ൻ final nouns (e.g. അവൻ, നടൻ).",
@@ -237,6 +242,7 @@ CLASSES: Dict[str, NounClass] = {
         },
         plural_marker=StemTransform("", ""),
         plural_cases={},
+        plural_requires_animacy=True,
     ),
     "chillu_ll": NounClass(
         name="chillu_ll",
@@ -258,6 +264,7 @@ CLASSES: Dict[str, NounClass] = {
         },
         plural_marker=StemTransform("", ""),
         plural_cases={},
+        plural_requires_animacy=True,
     ),
     "chillu_r": NounClass(
         name="chillu_r",
@@ -279,6 +286,7 @@ CLASSES: Dict[str, NounClass] = {
         },
         plural_marker=StemTransform("", ""),
         plural_cases={},
+        plural_requires_animacy=True,
     ),
     "chillu_l": NounClass(
         name="chillu_l",
@@ -300,6 +308,7 @@ CLASSES: Dict[str, NounClass] = {
         },
         plural_marker=StemTransform("", ""),
         plural_cases={},
+        plural_requires_animacy=True,
     ),
     "chillu_nn": NounClass(
         name="chillu_nn",
@@ -321,5 +330,6 @@ CLASSES: Dict[str, NounClass] = {
         },
         plural_marker=StemTransform("", ""),
         plural_cases={},
+        plural_requires_animacy=True,
     ),
 }

@@ -43,11 +43,13 @@ outside the supported classes raise rather than guess. Five classes (`am_neuter`
 `vowel_anuswara` കലാം, `i_vowel`
 കുട്ടി/സ്ത്രീ, `u_vowel` പശു, `ṭ_geminate` വീട്) are complete in singular and plural;
 `a_stem` (അമ്മ) and the chillu classes (`അവൻ`, `മകൾ`, `കാർ`, `കാൽ`, `തൂൺ`) are
-singular-complete, with plurals pending. Suppletive personal pronouns (ഞാൻ, നീ, അവർ, നാം,
-താൻ, ഇവൻ) are handled through an exception table rather than the rule engine. Includes
-differential object marking and a synthetic/colloquial register for the instrumental. See
-[`LIMITATIONS.md`](LIMITATIONS.md) for the precise gaps. Plurals for `a_stem`/chillu,
-gender derivation, clitics/postpositions, stylistic variants, and verbs are future work.
+singular-complete; their plurals are animacy-conditioned across the full paradigm
+(inanimate `-കൾ`/`-ഉകൾ`, human `-മാർ`/`-ന്മാർ`/`-കാർ`, animate `-കൾ`). Suppletive personal
+pronouns (ഞാൻ, നീ, അവർ, നാം, താൻ, ഇവൻ) are handled through an exception table rather than
+the rule engine. A `derive_feminine` helper builds a feminine lemma from a masculine base
+(എഴുത്തുകാരൻ → എഴുത്തുകാരി) before inflection. Includes differential object marking and a
+synthetic/colloquial register for the instrumental. See [`LIMITATIONS.md`](LIMITATIONS.md)
+for the precise gaps. Clitics/postpositions, stylistic variants, and verbs are future work.
 
 ## Install
 

@@ -7,11 +7,12 @@ starting with noun inflection. Rules are declarative and provenance-tagged; see
 REFERENCES.md for the linguistic sources and the project's native-ratification
 workflow.
 """
+from .gender import UnsupportedDerivation, derive_feminine
 from .nouns import UnsupportedRoot, list_supported_classes, synthesize_noun
 from .pronouns import is_pronoun, list_pronouns
 from .types import Animacy, Case, Gender, NounFeatures, Number, Register, SynthResult
 
-__version__ = "0.0.2"
+__version__ = "0.0.3"
 __all__ = [
     "Animacy",
     "Case",
@@ -24,6 +25,8 @@ __all__ = [
     "list_supported_classes",
     "is_pronoun",
     "list_pronouns",
+    "derive_feminine",
+    "UnsupportedDerivation",
     "UnsupportedRoot",
     "__version__",
 ]

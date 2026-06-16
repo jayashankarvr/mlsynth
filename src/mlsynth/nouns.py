@@ -18,13 +18,48 @@ from __future__ import annotations
 from typing import List, Optional
 
 from .pronouns import PRONOUN_FORMS
-from .rules import CLASSES, NounClass
+from .rules import CLASSES, NounClass, _plural_cases
 from .types import Animacy, Case, Gender, NounFeatures, Number, Register, SynthResult
 
 # Chillu -> base consonant (a chillu reverts before a following vowel sign).
 _CHILLU_BASE = {
     "ൺ": "ണ", "ൻ": "ന", "ർ": "ര", "ൽ": "ല", "ൾ": "ള", "ൿ": "ക",
 }
+
+# Shared oblique plural suffixes for a plural stem ending in a chillu (ൾ for inanimate
+# -കൾ/-ഉകൾ and the irregular മക്കൾ; ർ for the human -മാർ/-ന്മാർ/-കാർ). _attach reverts the
+# chillu before a vowel suffix, so the same paradigm serves every animacy.
+_PLURAL_OBLIQUE = _plural_cases("native-2026", True)
+
+# Suppletive / kinship plurals: root -> plural nominative, checked before the regular
+# animacy rules. These are human/animate, so only the nominative is encoded for now.
+_IRREGULAR_PLURALS = {
+    "മകൾ": "മക്കൾ",     # daughter -> children
+    "മകൻ": "മക്കൾ",     # son -> children
+    "അവൻ": "അവർ",       # he -> they (-അൻ -> -അർ, lexical)
+    "മനുഷ്യൻ": "മനുഷ്യർ",  # man -> people (-അൻ -> -അർ, lexical; not *മനുഷ്യന്മാർ)
+}
+
+
+def _inanimate_plural_stem(cls: NounClass, root: str) -> str:
+    """Inanimate plural: a chillu drops to its *lexical* base consonant via the class
+    oblique + -ഉകൾ (കാർ -> കാറുകൾ, with the retroflex റ, not the dental ര of -മാർ); a
+    bare-consonant (-അ) stem just takes -കൾ (പുഴ -> പുഴകൾ)."""
+    if root and root[-1] in _CHILLU_BASE:
+        return cls.oblique.apply(root) + "ുകൾ"
+    return root + "കൾ"
+
+
+def _human_plural_stem(root: str) -> str:
+    """Human plural (native spec, agentive-aware): the agentive -കാരൻ takes -കാർ
+    (എഴുത്തുകാരൻ -> എഴുത്തുകാർ); any other -ൻ takes -ന്മാർ (അധ്യാപകൻ -> അധ്യാപകന്മാർ);
+    everything else takes -മാർ (അമ്മ -> അമ്മമാർ, ഡോക്ടർ -> ഡോക്ടർമാർ). Lexical -ർ
+    exceptions (മനുഷ്യൻ -> മനുഷ്യർ) belong in the irregular-override table."""
+    if root.endswith("കാരൻ"):
+        return root[:-2] + "ർ"
+    if root.endswith("ൻ"):
+        return root[:-1] + "ന്മാർ"
+    return root + "മാർ"
 
 
 def _is_vowel_sign(ch: str) -> bool:
@@ -172,6 +207,41 @@ def synthesize_noun(
             surface=surface, root=root, features=features, morphemes=morphemes,
             stem_class=cls.name, provenance=provenance, verified=verified, analytic=analytic,
         )
+
+    # Animacy-conditioned plurals (a_stem + chillu), computed here rather than table-driven
+    # because the marker depends on animacy. Every plural stem ends in a chillu (ർ for
+    # -മാർ/-ന്മാർ/-കാർ/അവർ/മനുഷ്യർ, ൾ for -കൾ/-ഉകൾ/മക്കൾ), and _attach reverts it before a
+    # vowel suffix (ർ -> ര: അമ്മമാർ + ുടെ -> അമ്മമാരുടെ; ൾ -> ള: മക്കൾ + ുടെ -> മക്കളുടെ), so
+    # one ratified oblique paradigm serves all three animacies. Animacy must be given:
+    # without it -മാർ vs -കൾ is unpredictable, so we raise rather than guess. Non-human
+    # animates pluralize like inanimates (-കൾ) but keep the overt accusative.
+    if number is Number.PLURAL and cls.plural_requires_animacy:
+        if root in _IRREGULAR_PLURALS:
+            plural_nom = _IRREGULAR_PLURALS[root]
+        elif animacy in (Animacy.INANIMATE, Animacy.ANIMATE):
+            plural_nom = _inanimate_plural_stem(cls, root)
+        elif animacy is Animacy.HUMAN:
+            plural_nom = _human_plural_stem(root)
+        else:
+            raise NotImplementedError(
+                f"plural of class {cls.name!r} requires an explicit animacy "
+                f"(HUMAN, ANIMATE, or INANIMATE); got {animacy!r}"
+            )
+        if case is Case.INSTRUMENTAL and register is Register.COLLOQUIAL:
+            return _result(plural_nom + " കൊണ്ട്", [plural_nom, "കൊണ്ട്"],
+                           "native-2026", True, analytic=True)
+        if case is Case.NOMINATIVE:
+            return _result(plural_nom, [plural_nom], "native-2026", True)
+        # DOM zero-marks the inanimate accusative only. Irregulars are human/animate (their
+        # override stem is checked before animacy), so they keep the overt accusative even
+        # if a contradictory animacy=INANIMATE is passed.
+        if (case is Case.ACCUSATIVE and animacy is Animacy.INANIMATE
+                and not marked and root not in _IRREGULAR_PLURALS):
+            return _result(plural_nom, [plural_nom], "native-2026", True)
+        suffix = _PLURAL_OBLIQUE[case].suffix
+        surface = _attach(plural_nom, suffix)
+        morphemes = [plural_nom, suffix] if suffix else [plural_nom]
+        return _result(surface, morphemes, "native-2026", True)
 
     table = cls.plural_cases if number is Number.PLURAL else cls.cases
     try:
