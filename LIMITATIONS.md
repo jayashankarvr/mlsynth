@@ -4,7 +4,7 @@ mlsynth never emits a form it has not verified; when it cannot, it raises
 `NotImplementedError` (a supported class, but that case or number is not encoded) or
 `UnsupportedRoot` (the root fits no class). The items below are genuine constraints:
 distinctions the orthography does not carry, and problems outside this package's scope.
-Planned-but-unbuilt features (clitics, postpositions, stylistic variants) are tracked as
+Planned-but-unbuilt features (postpositions, stylistic variants) are tracked as
 future work in the README, not here.
 
 ## Distinctions the input does not carry

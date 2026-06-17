@@ -51,6 +51,14 @@ class Register(str, Enum):
     COLLOQUIAL = "colloquial"  # analytic forms (e.g. മരം കൊണ്ട്)
 
 
+class Clitic(str, Enum):
+    """Post-inflectional clitics, attached after the case form (the final agglutination layer)."""
+
+    UM = "ഉം"        # additive 'and / even'
+    O = "ഓ"          # interrogative (yes/no)
+    EMPHATIC = "തന്നെ"  # emphatic 'self / the very'
+
+
 @dataclass(frozen=True)
 class NounFeatures:
     case: Case
@@ -58,6 +66,7 @@ class NounFeatures:
     animacy: Optional[Animacy] = None
     register: Register = Register.FORMAL
     gender: Optional[Gender] = None
+    clitic: Optional["Clitic"] = None
 
 
 @dataclass(frozen=True)

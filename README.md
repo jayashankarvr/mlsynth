@@ -5,12 +5,14 @@ morphological generation: given a root and grammatical features, it produces the
 inflected surface form (the counterpart to morphological analysis/segmentation).
 
 ```python
-from mlsynth import synthesize_noun, Case, Number
+from mlsynth import synthesize_noun, with_clitic, Case, Clitic, Number
 
 synthesize_noun("മരം", Case.LOCATIVE).surface          # 'മരത്തിൽ'
 synthesize_noun("മരം", Case.GENITIVE).surface          # 'മരത്തിന്റെ'
 synthesize_noun("കുട്ടി", Case.GENITIVE).surface        # 'കുട്ടിയുടെ'
 synthesize_noun("മരം", Case.NOMINATIVE, number=Number.PLURAL).surface  # 'മരങ്ങൾ'
+
+with_clitic(synthesize_noun("കുട്ടി", Case.ACCUSATIVE), Clitic.UM).surface  # 'കുട്ടിയെയും'
 ```
 
 ## Why this exists
@@ -49,7 +51,8 @@ pronouns (ഞാൻ, നീ, അവർ, നാം, താൻ, ഇവൻ) are han
 the rule engine. A `derive_feminine` helper builds a feminine lemma from a masculine base
 (എഴുത്തുകാരൻ → എഴുത്തുകാരി) before inflection. Includes differential object marking and a
 synthetic/colloquial register for the instrumental. See [`LIMITATIONS.md`](LIMITATIONS.md)
-for the precise gaps. Clitics/postpositions, stylistic variants, and verbs are future work.
+for the precise gaps. Clitics (`-ഉം`, `-ഓ`, `-തന്നെ`) attach via `with_clitic`. Postpositions,
+stylistic variants, and verbs are future work.
 
 ## Install
 
