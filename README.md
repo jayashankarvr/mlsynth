@@ -71,6 +71,6 @@ pip install -e ".[dev]"
 ## License
 
 Apache-2.0. See `LICENSE` and `NOTICE`. Contributions are accepted under Apache-2.0
-§5 (inbound = outbound); no separate CLA is required.
+section 5 (inbound = outbound); no separate CLA is required.
 
 Linguistic sources are credited in `REFERENCES.md`.
