@@ -2,7 +2,7 @@
 # Copyright 2026 Jayashankar R
 """Suppletive personal-pronoun paradigms.
 
-Pronouns bypass the rule engine: their oblique stems are suppletive (ഞാൻ 'I' →
+Pronouns bypass the rule engine: their oblique stems are suppletive (ഞാൻ 'I' ->
 എന്നെ / എനിക്ക് / എന്റെ), so standard agglutination would emit a wrong form (the
 class engine would treat ഞാൻ as a -ൻ chillu and produce *ഞാനെ). The forms below are
 the canonical (first-listed) variant per case; ratified spoken/written alternates are

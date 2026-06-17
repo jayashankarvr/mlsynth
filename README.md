@@ -53,7 +53,7 @@ singular-complete; their plurals are animacy-conditioned across the full paradig
 (inanimate `-കൾ`/`-ഉകൾ`, human `-മാർ`/`-ന്മാർ`/`-കാർ`, animate `-കൾ`). Suppletive personal
 pronouns (ഞാൻ, നീ, അവർ, നാം, താൻ, ഇവൻ) are handled through an exception table rather than
 the rule engine. A `derive_feminine` helper builds a feminine lemma from a masculine base
-(എഴുത്തുകാരൻ → എഴുത്തുകാരി) before inflection. Includes differential object marking and a
+(എഴുത്തുകാരൻ -> എഴുത്തുകാരി) before inflection. Includes differential object marking and a
 synthetic/colloquial register for the instrumental. Clitics (`-ഉം`, `-ഓ`, `-തന്നെ`) attach
 via `with_clitic`. Verbs (`synthesize_verb`) cover the finite forms: present, future, past
 (allomorphy by ending plus an irregular lexicon), negation, imperative, and a few moods.

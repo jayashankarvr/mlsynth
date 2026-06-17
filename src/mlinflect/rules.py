@@ -7,7 +7,7 @@ A noun class is selected by the root's ending (anuswara `ം`, vowel signs `ി`
 constraint. Each class supplies an oblique-stem transform and a matra-initial suffix
 per case; a case may override the stem (e.g. `ട്` geminates only for spatial cases).
 Suffixes attach via ``nouns._attach``, which reverts a trailing chillu to its base
-consonant before a vowel sign (so plural മരങ്ങൾ + `ുടെ` → മരങ്ങളുടെ).
+consonant before a vowel sign (so plural മരങ്ങൾ + `ുടെ` -> മരങ്ങളുടെ).
 
 Provenance keys (see REFERENCES.md): ``native-2026`` (native-ratified), ``smc-morph``
 (SMC docs, pending native sign-off), ``native-14`` (genitive #14). Editing a paradigm

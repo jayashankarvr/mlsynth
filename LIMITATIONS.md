@@ -32,5 +32,5 @@ aspects/participles/voice/causatives) are tracked as future work in the README, 
 
 ## Out of scope
 
-- **Noun compounding and external sandhi**: joining two lemmas (e.g. ആന + കുട്ടി →
+- **Noun compounding and external sandhi**: joining two lemmas (e.g. ആന + കുട്ടി ->
   ആനക്കുട്ടി, with gemination) is a separate problem from single-lemma inflection.
