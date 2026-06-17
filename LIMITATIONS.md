@@ -21,9 +21,12 @@ aspects/participles/voice/causatives) are tracked as future work in the README, 
 
 - `synthesize_verb` covers the finite forms (present, future, past, negation, imperative,
   conditional, hortative, promissive) from the `-ഉക` infinitive. Past allomorphy is selected
-  by ending plus an irregular lexicon; a verb that follows none of the rules and is not in
-  the lexicon takes the default `-ഇ`, which can be wrong for an unlisted irregular (the past
-  is partly lexical, by the native review). Non-`-ഉക` infinitives outside the lexicon raise.
+  by ending plus an irregular lexicon. The past is partly lexical (native review): the
+  irregular lexicon is not exhaustive, so a verb that hits none of the ending-rules takes the
+  default `-ഇ`, which is wrong for an unlisted irregular (`നടക്കുക` yields `നടക്കി`, really
+  `നടന്നു`). Such default-guess pasts carry `verified=False`, as do imperatives of lexicon
+  verbs (which may be suppletive, `വരുക` -> `വാ`, not `വര്`); only confident forms are
+  `verified=True`. Non-`-ഉക` infinitives outside the lexicon raise.
 - Analytic ability/obligation (`ഓടാൻ പറ്റും`, `ഓടാൻ വേണം`) and aspect/participle/voice
   constructions are not generated.
 

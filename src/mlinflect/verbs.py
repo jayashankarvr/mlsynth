@@ -60,55 +60,65 @@ def _stem(infinitive: str) -> str:
     return infinitive[:-2]
 
 
-def _past(infinitive: str) -> str:
-    """The past form: irregular lexicon first, then ending-conditioned allomorphy."""
+def _past(infinitive: str) -> tuple[str, bool]:
+    """Return (past_surface, verified). ``verified`` is True for irregular-lexicon hits and
+    the phonological ending-rules (-ിച്ചു/-ുത്തു/-ഞ്ഞു/-ട്ടു); it is False for the bare default
+    -ഇ fallthrough, which is only a best guess and is wrong for unlisted irregulars
+    (നടക്കുക -> *നടക്കി, really നടന്നു), as the native review noted the past is partly lexical."""
     if infinitive in _IRREGULAR_PAST:
-        return _IRREGULAR_PAST[infinitive]
+        return _IRREGULAR_PAST[infinitive], True
     if infinitive.endswith("ിക്കുക"):
-        return infinitive[:-6] + "ിച്ചു"
+        return infinitive[:-6] + "ിച്ചു", True
     if infinitive.endswith("ുക്കുക"):
-        return infinitive[:-6] + "ുത്തു"
+        return infinitive[:-6] + "ുത്തു", True
     if infinitive.endswith("യുക"):
-        return infinitive[:-3] + "ഞ്ഞു"
+        return infinitive[:-3] + "ഞ്ഞു", True
     if infinitive.endswith("ടുക"):
         prev = infinitive[:-3]
         if prev and prev[-1] in _SHORT_VOWELS:   # short vowel before ട -> geminate
-            return prev + "ട്ടു"                  # ഇടുക -> ഇട്ടു, തൊടുക -> തൊട്ടു
+            return prev + "ട്ടു", True            # ഇടുക -> ഇട്ടു, തൊടുക -> തൊട്ടു
         # long vowel / already-geminate cluster / consonant falls through to the default -ഇ
-    return _stem(infinitive) + "ി"            # default -ഇ (ഓടി, നോക്കി, കലങ്ങി, ഞെട്ടി)
+    return _stem(infinitive) + "ി", False         # default -ഇ: unconfirmed guess
 
 
-def _past_plus(infinitive: str, matra_suffix: str) -> str:
-    """Attach a matra-initial suffix to the past form (for the negative and conditional):
-    a default -ഇ past takes the യ glide (ഓടി + ില്ല -> ഓടിയില്ല); a -ഉ past, or a past that
-    already ends in a glide + ി (the irregular പോയി), drops its final vowel (വന്നു -> വന്നില്ല,
-    പോയി -> പോയില്ല / പോയാൽ)."""
-    past = _past(infinitive)
+def _past_plus(infinitive: str, matra_suffix: str) -> tuple[str, bool]:
+    """Attach a matra-initial suffix to the past form (negative/conditional) and carry the
+    past's ``verified`` through. A default -ഇ past takes the യ glide (ഓടി + ില്ല -> ഓടിയില്ല);
+    a -ഉ past, or a past already ending in glide + ി (the irregular പോയി), drops its final
+    vowel (വന്നു -> വന്നില്ല, പോയി -> പോയില്ല / പോയാൽ)."""
+    past, verified = _past(infinitive)
     if past.endswith("ി"):
         if len(past) >= 2 and past[-2] in ("യ", "വ"):   # glide already present (പോയി)
-            return past[:-1] + matra_suffix
-        return past + "യ" + matra_suffix
+            return past[:-1] + matra_suffix, verified
+        return past + "യ" + matra_suffix, verified
     if past.endswith("ു"):
-        return past[:-1] + matra_suffix
+        return past[:-1] + matra_suffix, verified
     raise UnsupportedVerb(f"cannot attach {matra_suffix!r} to past {past!r}")
 
 
 def synthesize_verb(infinitive: str, form: VerbForm) -> VerbResult:
     """Generate a finite verb form from its -ഉക infinitive.
 
-    Unsupported infinitive shapes or unencoded forms raise :class:`UnsupportedVerb`.
-    Never a silently wrong form.
+    Unsupported infinitive shapes or unencoded forms raise :class:`UnsupportedVerb`. Forms
+    that the rules cannot guarantee (a default-guess past, or an imperative of a verb in the
+    irregular lexicon, which may be suppletive like വരുക -> വാ) carry ``verified=False`` rather
+    than over-claim native ratification. Never a silently wrong, silently-verified form.
     """
-    irregular = infinitive in _IRREGULAR_PAST
+    in_lexicon = infinitive in _IRREGULAR_PAST
+    irregular = False
 
     if form is VerbForm.PAST:
-        surface = _past(infinitive)
+        surface, verified = _past(infinitive)
+        irregular = in_lexicon
     elif form is VerbForm.PAST_NEGATIVE:
-        surface = _past_plus(infinitive, "ില്ല")
+        surface, verified = _past_plus(infinitive, "ില്ല")
+        irregular = in_lexicon
     elif form is VerbForm.CONDITIONAL:
-        surface = _past_plus(infinitive, "ാൽ")
+        surface, verified = _past_plus(infinitive, "ാൽ")
+        irregular = in_lexicon
     else:
         stem = _stem(infinitive)
+        verified = True
         if form is VerbForm.PRESENT:
             surface = stem + "ുന്നു"
         elif form is VerbForm.FUTURE:
@@ -119,17 +129,18 @@ def synthesize_verb(infinitive: str, form: VerbForm) -> VerbResult:
             surface = stem + "ില്ല"
         elif form is VerbForm.IMPERATIVE_INFORMAL:
             surface = stem + "്"
+            verified = not in_lexicon   # suppletive risk (വരുക -> വാ, not വര്)
         elif form is VerbForm.IMPERATIVE_POLITE:
             surface = stem + "ൂ"
+            verified = not in_lexicon
         elif form is VerbForm.HORTATIVE:
             surface = stem + "ട്ടെ"
         elif form is VerbForm.PROMISSIVE:
             surface = stem + "ാം"
         else:
             raise UnsupportedVerb(f"verb form {form!r} not encoded")
-        irregular = False  # present/future/imperative/moods are regular even for irregulars
 
     return VerbResult(
         surface=surface, infinitive=infinitive, form=form,
-        provenance="native-2026", verified=True, irregular=irregular,
+        provenance="native-2026", verified=verified, irregular=irregular,
     )

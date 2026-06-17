@@ -50,7 +50,6 @@ IRREGULAR_PAST = [
 def test_regular_past(inf, past):
     r = v(inf, VerbForm.PAST)
     assert r.surface == past
-    assert r.verified is True
     assert r.irregular is False
 
 
@@ -59,6 +58,30 @@ def test_irregular_past(inf, past):
     r = v(inf, VerbForm.PAST)
     assert r.surface == past
     assert r.irregular is True
+    assert r.verified is True  # lexicon hits are ratified
+
+
+# verified gating: the ending-rules and lexicon are confident; the bare default -ഇ is a guess
+# (wrong for unlisted irregulars like നടക്കുക -> really നടന്നു), so it must NOT claim verified.
+@pytest.mark.parametrize("inf, verified", [
+    ("പറിക്കുക", True),    # -ിക്കുക rule
+    ("കൊടുക്കുക", True),   # -ുക്കുക rule
+    ("പണിയുക", True),      # -യുക rule
+    ("ഇടുക", True),        # short -ടുക rule
+    ("ഓടുക", False),       # default -ഇ: unconfirmed
+    ("നോക്കുക", False),    # default -ഇ: unconfirmed
+    ("നടക്കുക", False),    # default -ഇ guess that is actually irregular (നടന്നു)
+])
+def test_past_verified_gating(inf, verified):
+    assert v(inf, VerbForm.PAST).verified is verified
+
+
+def test_suppletive_imperative_not_verified():
+    # An irregular/suppletive verb's imperative may be wrong (വരുക -> വാ, not വര്), so the
+    # rule-generated imperative must not claim verified; a regular verb's imperative does.
+    assert v("ഓടുക", VerbForm.IMPERATIVE_INFORMAL).verified is True
+    assert v("വരുക", VerbForm.IMPERATIVE_INFORMAL).verified is False
+    assert v("പോകുക", VerbForm.IMPERATIVE_POLITE).verified is False
 
 
 # --- Part 4: negation, imperative, moods (ഓടുക) ---
