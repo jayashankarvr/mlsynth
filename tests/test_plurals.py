@@ -8,7 +8,7 @@ raises rather than guess -മാർ vs -കൾ.
 """
 import pytest
 
-from mlsynth import Animacy, Case, Number, synthesize_noun
+from mlinflect import Animacy, Case, Number, synthesize_noun
 
 PL = Number.PLURAL
 

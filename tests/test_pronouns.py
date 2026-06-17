@@ -3,7 +3,7 @@
 """Suppletive pronoun paradigms and the soundness guarantees around them."""
 import pytest
 
-from mlsynth import Case, is_pronoun, list_pronouns, synthesize_noun
+from mlinflect import Case, is_pronoun, list_pronouns, synthesize_noun
 
 # (root, case, expected surface): native-ratified suppletive forms.
 PRONOUN_FORMS = [
@@ -53,7 +53,7 @@ def test_unencoded_pronoun_case_raises():
 def test_pronoun_plural_raises():
     # The pronoun table is singular-only; pronoun plurals are suppletive. A plural
     # request must raise, never return the singular form.
-    from mlsynth import Number
+    from mlinflect import Number
 
     with pytest.raises(NotImplementedError):
         synthesize_noun("ഞാൻ", Case.ACCUSATIVE, number=Number.PLURAL)

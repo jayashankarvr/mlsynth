@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright 2026 Jayashankar R
-"""Tests for mlsynth noun synthesis.
+"""Tests for mlinflect noun synthesis.
 
 Expected surface forms are typed as independent literals (the forms attested in the
 sources / native worksheet), and the engine constructs them from root + rules, so a
@@ -9,7 +9,7 @@ being a tautology.
 """
 import pytest
 
-from mlsynth import (
+from mlinflect import (
     Animacy,
     Case,
     Number,

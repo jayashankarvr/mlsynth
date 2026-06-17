@@ -11,9 +11,21 @@ from .clitics import UnsupportedClitic, with_clitic
 from .gender import UnsupportedDerivation, derive_feminine
 from .nouns import UnsupportedRoot, list_supported_classes, synthesize_noun
 from .pronouns import is_pronoun, list_pronouns
-from .types import Animacy, Case, Clitic, Gender, NounFeatures, Number, Register, SynthResult
+from .types import (
+    Animacy,
+    Case,
+    Clitic,
+    Gender,
+    NounFeatures,
+    Number,
+    Register,
+    SynthResult,
+    VerbForm,
+    VerbResult,
+)
+from .verbs import UnsupportedVerb, synthesize_verb
 
-__version__ = "0.0.5"
+__version__ = "0.1.0"
 __all__ = [
     "Animacy",
     "Case",
@@ -23,7 +35,10 @@ __all__ = [
     "NounFeatures",
     "Register",
     "SynthResult",
+    "VerbForm",
+    "VerbResult",
     "synthesize_noun",
+    "synthesize_verb",
     "with_clitic",
     "list_supported_classes",
     "is_pronoun",
@@ -32,5 +47,6 @@ __all__ = [
     "UnsupportedClitic",
     "UnsupportedDerivation",
     "UnsupportedRoot",
+    "UnsupportedVerb",
     "__version__",
 ]

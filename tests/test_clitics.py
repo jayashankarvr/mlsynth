@@ -7,7 +7,7 @@ anuswara and the emphatic -തന്നെ have their own ratified sandhi. Forms
 """
 import pytest
 
-from mlsynth import (
+from mlinflect import (
     Case,
     Clitic,
     Number,

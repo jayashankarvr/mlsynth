@@ -1,11 +1,11 @@
-# mlsynth
+# mlinflect
 
 A rule-based Malayalam morphological synthesizer. It does forward
 morphological generation: given a root and grammatical features, it produces the
 inflected surface form (the counterpart to morphological analysis/segmentation).
 
 ```python
-from mlsynth import synthesize_noun, with_clitic, Case, Clitic, Number
+from mlinflect import synthesize_noun, synthesize_verb, with_clitic, Case, Clitic, Number, VerbForm
 
 synthesize_noun("മരം", Case.LOCATIVE).surface          # 'മരത്തിൽ'
 synthesize_noun("മരം", Case.GENITIVE).surface          # 'മരത്തിന്റെ'
@@ -13,6 +13,10 @@ synthesize_noun("കുട്ടി", Case.GENITIVE).surface        # 'കുട
 synthesize_noun("മരം", Case.NOMINATIVE, number=Number.PLURAL).surface  # 'മരങ്ങൾ'
 
 with_clitic(synthesize_noun("കുട്ടി", Case.ACCUSATIVE), Clitic.UM).surface  # 'കുട്ടിയെയും'
+
+synthesize_verb("ഓടുക", VerbForm.PAST).surface          # 'ഓടി'
+synthesize_verb("കൊടുക്കുക", VerbForm.PAST).surface      # 'കൊടുത്തു'
+synthesize_verb("ഓടുക", VerbForm.PRESENT_NEGATIVE).surface  # 'ഓടുന്നില്ല'
 ```
 
 ## Why this exists
@@ -20,12 +24,12 @@ with_clitic(synthesize_noun("കുട്ടി", Case.ACCUSATIVE), Clitic.UM).s
 Existing Malayalam morphology tools are either copyleft (Apertium, libindic =
 GPL/AGPL) or, in the case of the one permissive *generator* (`mlmorph`, MIT), built
 on a GPL FST runtime. There is no permissive, dependency-clean, rule-based Malayalam
-**synthesizer**. `mlsynth` aims to fill that gap with a small pure-Python rule engine
+**synthesizer**. `mlinflect` aims to fill that gap with a small pure-Python rule engine
 and no copyleft dependencies.
 
 ## Design
 
-- **Declarative, provenance-tagged rules** (`mlsynth/rules.py`): each rule cites the
+- **Declarative, provenance-tagged rules** (`mlinflect/rules.py`): each rule cites the
   source it was drawn from and carries a `verified` flag that is `True` only when the
   form has been ratified by a native reviewer. Adding or correcting a paradigm is a
   data edit, not a code change.
@@ -50,14 +54,16 @@ singular-complete; their plurals are animacy-conditioned across the full paradig
 pronouns (ഞാൻ, നീ, അവർ, നാം, താൻ, ഇവൻ) are handled through an exception table rather than
 the rule engine. A `derive_feminine` helper builds a feminine lemma from a masculine base
 (എഴുത്തുകാരൻ → എഴുത്തുകാരി) before inflection. Includes differential object marking and a
-synthetic/colloquial register for the instrumental. See [`LIMITATIONS.md`](LIMITATIONS.md)
-for the precise gaps. Clitics (`-ഉം`, `-ഓ`, `-തന്നെ`) attach via `with_clitic`. Postpositions,
-stylistic variants, and verbs are future work.
+synthetic/colloquial register for the instrumental. Clitics (`-ഉം`, `-ഓ`, `-തന്നെ`) attach
+via `with_clitic`. Verbs (`synthesize_verb`) cover the finite forms: present, future, past
+(allomorphy by ending plus an irregular lexicon), negation, imperative, and a few moods.
+See [`LIMITATIONS.md`](LIMITATIONS.md) for the precise gaps. Postpositions, stylistic
+variants, and verb aspects/participles/voice are future work.
 
 ## Install
 
 ```bash
-pip install mlsynth
+pip install mlinflect
 # from source:
 pip install -e ".[dev]"
 ```

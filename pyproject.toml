@@ -3,9 +3,9 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "mlsynth"
-version = "0.0.5"
-description = "Rule-based Malayalam morphological synthesizer (noun inflection generation)."
+name = "mlinflect"
+version = "0.1.0"
+description = "Rule-based Malayalam morphological synthesizer (noun and verb inflection generation)."
 readme = "README.md"
 requires-python = ">=3.9"
 license = "Apache-2.0"
@@ -22,15 +22,15 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/jayashankarvr/mlsynth"
-Source = "https://github.com/jayashankarvr/mlsynth"
-Issues = "https://github.com/jayashankarvr/mlsynth/issues"
+Homepage = "https://github.com/jayashankarvr/mlinflect"
+Source = "https://github.com/jayashankarvr/mlinflect"
+Issues = "https://github.com/jayashankarvr/mlinflect/issues"
 
 [project.optional-dependencies]
 dev = ["pytest>=7"]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/mlsynth"]
+packages = ["src/mlinflect"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -3,7 +3,7 @@
 """Rule-based Malayalam noun synthesis: (root + features) -> inflected surface form.
 
 The forward (generation) counterpart to morphological analysis, applying the
-ending-conditioned rules in :mod:`mlsynth.rules`. Every result carries the rule's
+ending-conditioned rules in :mod:`mlinflect.rules`. Every result carries the rule's
 provenance and a ``verified`` flag (true only for native-ratified forms).
 
 Two cross-cutting rules from the native review / SMC docs:

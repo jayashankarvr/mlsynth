@@ -1,12 +1,12 @@
 # References
 
-`mlsynth` implements Malayalam morphological **facts** (case-marker allomorphy,
+`mlinflect` implements Malayalam morphological **facts** (case-marker allomorphy,
 oblique-stem augments, glide insertion) restated in our own rule engine. **No text,
 tables, code, or datasets from any source below are reproduced or redistributed.**
 These citations are scholarly credit; they imply no endorsement and create no license
 obligation.
 
-Each rule in `mlsynth/rules.py` carries a `provenance` key from this list. Forms are
+Each rule in `mlinflect/rules.py` carries a `provenance` key from this list. Forms are
 ratified through a native-reviewer workflow; a rule's `verified` flag is `True` only
 after native sign-off.
 

@@ -3,7 +3,7 @@
 """Feminine derivation (pre-inflection) and its composition with case inflection."""
 import pytest
 
-from mlsynth import (
+from mlinflect import (
     Case,
     UnsupportedDerivation,
     derive_feminine,

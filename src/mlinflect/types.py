@@ -86,3 +86,35 @@ class SynthResult:
     provenance: str
     verified: bool
     analytic: bool = False
+
+
+class VerbForm(str, Enum):
+    """Finite verb forms (the foundational set; aspects/participles/voice come later)."""
+
+    PRESENT = "present"
+    FUTURE = "future"
+    PAST = "past"
+    PRESENT_NEGATIVE = "present_negative"
+    PAST_NEGATIVE = "past_negative"
+    FUTURE_NEGATIVE = "future_negative"
+    IMPERATIVE_INFORMAL = "imperative_informal"
+    IMPERATIVE_POLITE = "imperative_polite"
+    CONDITIONAL = "conditional"
+    HORTATIVE = "hortative"
+    PROMISSIVE = "promissive"
+
+
+@dataclass(frozen=True)
+class VerbResult:
+    """One synthesized verb form.
+
+    ``provenance`` cites the rule (see REFERENCES.md); ``verified`` is true only for
+    native-ratified forms; ``irregular`` flags a form taken from the exception lexicon.
+    """
+
+    surface: str
+    infinitive: str
+    form: VerbForm
+    provenance: str
+    verified: bool
+    irregular: bool = False

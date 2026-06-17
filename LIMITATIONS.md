@@ -1,11 +1,10 @@
 # Limitations
 
-mlsynth never emits a form it has not verified; when it cannot, it raises
-`NotImplementedError` (a supported class, but that case or number is not encoded) or
-`UnsupportedRoot` (the root fits no class). The items below are genuine constraints:
-distinctions the orthography does not carry, and problems outside this package's scope.
-Planned-but-unbuilt features (postpositions, stylistic variants) are tracked as
-future work in the README, not here.
+mlinflect never emits a form it has not verified; when it cannot, it raises
+`NotImplementedError` / `UnsupportedRoot` / `UnsupportedVerb`. The items below are genuine
+constraints: distinctions the orthography does not carry, and problems outside this
+package's scope. Planned-but-unbuilt features (postpositions, stylistic variants, verb
+aspects/participles/voice/causatives) are tracked as future work in the README, not here.
 
 ## Distinctions the input does not carry
 
@@ -18,8 +17,17 @@ future work in the README, not here.
   written as a bare `-ു` instead of `-്`, or truncated text) is inflected rather than
   rejected, so callers must pass well-formed lemmas.
 
+## Verbs: finite forms only
+
+- `synthesize_verb` covers the finite forms (present, future, past, negation, imperative,
+  conditional, hortative, promissive) from the `-ഉക` infinitive. Past allomorphy is selected
+  by ending plus an irregular lexicon; a verb that follows none of the rules and is not in
+  the lexicon takes the default `-ഇ`, which can be wrong for an unlisted irregular (the past
+  is partly lexical, by the native review). Non-`-ഉക` infinitives outside the lexicon raise.
+- Analytic ability/obligation (`ഓടാൻ പറ്റും`, `ഓടാൻ വേണം`) and aspect/participle/voice
+  constructions are not generated.
+
 ## Out of scope
 
-- **Verbs** (this package synthesizes nouns only).
 - **Noun compounding and external sandhi**: joining two lemmas (e.g. ആന + കുട്ടി →
   ആനക്കുട്ടി, with gemination) is a separate problem from single-lemma inflection.
